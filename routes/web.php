@@ -25,7 +25,15 @@ Route::prefix('painel')->group(function(){
     Route::get('/register', [App\Http\Controllers\Admin\Auth\RegisterController::class, 'index'])->name('register');
     Route::post('/register', [App\Http\Controllers\Admin\Auth\RegisterController::class, 'register']);
 
-    Route::get('/user' , [Ápp\Http\Controllers\Admin\UserController::class, 'index'])->name('users');
+    Route::resource('users', App\Http\Controllers\Admin\UserController::class);
+
+    Route::get('profile', [App\Http\Controllers\Admin\ProfileController::class, 'index'])->name('profile');
+    Route::put('profilesave', [App\Http\Controllers\Admin\ProfileController::class, 'save'])->name('profile.save');
+
+    Route::get('settings', [App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings');
+    Route::put('settingssave', [App\Http\Controllers\Admin\SettingController::class, 'save'])->name('settings.save');
+
+    Route::resource('pages', App\Http\Controllers\Admin\PageController::class);
 });
 
 
