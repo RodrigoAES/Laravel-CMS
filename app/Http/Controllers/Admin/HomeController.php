@@ -16,25 +16,27 @@ class HomeController extends Controller
     }
 
     public function index(Request $request) {
-        $dateLimit = date('Y-m-d H:i:s', strtotime('-5 minutes'));
-        $onlineCount = Visitor::select('ip')
-                ->where('access_date', '>=', $dateLimit)
+        $onlineLimit = date('Y-m-d H:i:s', strtotime('-5 minutes'));
+        $online = Visitor::select('ip')
+                ->where('access_date', '>=', $onlineLimit)
                 ->groupBy('ip')
-                ->count();
-            $pagePie = [];
-            $limit = $request->input('limit', '-30 days');
-            if(!in_array($limit, ['-30 days', '-60 days', '-90 days', '-120 days'])) {
-                $limit = '-120 days';
-            }
-            $dateLimit = date('Y-m-d H:i:s', strtotime($limit));
-            $visitsAll = Visitor::selectRaw('page, count(page) as c')
-                ->where('access_date', '>=', $dateLimit)
-                ->groupBy('page')
                 ->get();
-            foreach($visitsAll as $visit) {
-                $pagePie[$visit['page']] = intval($visit['c']);
-            }
+        $onlineCount = count($online);
 
+        $pagePie = [];
+        $limit = $request->input('limit', '-30 days');
+        if(!in_array($limit, ['-30 days', '-60 days', '-90 days', '-120 days'])) {
+            $limit = '-120 days';
+        }
+        $dateLimit = date('Y-m-d H:i:s', strtotime($limit));
+        $visitsAll = Visitor::selectRaw('page, count(page) as c')
+            ->where('access_date', '>=', $dateLimit)
+            ->groupBy('page')
+            ->get();
+        foreach($visitsAll as $visit) {
+            $pagePie[$visit['page']] = intval($visit['c']);
+        }
+        
         return view('admin.home', [
             'visitsCount' => Visitor::where('access_date', '>=', $dateLimit)->count(),
             'onlineCount' => $onlineCount,

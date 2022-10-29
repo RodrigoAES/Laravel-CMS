@@ -36,6 +36,8 @@ Route::prefix('painel')->group(function(){
     Route::resource('pages', App\Http\Controllers\Admin\PageController::class);
 });
 
+Route::fallback('App\Http\Controllers\Site\PageController@index');
+
 
 
 
